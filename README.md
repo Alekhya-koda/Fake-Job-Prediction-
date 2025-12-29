@@ -8,8 +8,6 @@ A machine learning project to detect fraudulent job postings using NLP and class
 - [Methodology](#methodology)
 - [Results](#results)
 - [Tech Stack](#tech-stack)
-- [Installation](#installation)
-- [Project Structure](#project-structure)
 - [Key Findings](#key-findings)
 
 ## Overview
