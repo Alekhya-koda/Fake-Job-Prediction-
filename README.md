@@ -1,0 +1,173 @@
+# Fake Job Prediction using Machine Learning
+
+A machine learning project to detect fraudulent job postings using NLP and classification algorithms. This project compares Logistic Regression and Decision Tree classifiers to identify fake job listings and protect job seekers from scams.
+
+## Table of Contents
+- [Overview](#overview)
+- [Dataset](#dataset)
+- [Methodology](#methodology)
+- [Results](#results)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Project Structure](#project-structure)
+- [Key Findings](#key-findings)
+
+## Overview
+
+Online job platforms have become a breeding ground for fraudulent job postings that steal personal information, collect financial data, and waste job seekers' time. This project uses machine learning to automatically detect suspicious job postings with high accuracy.
+
+**Problem**: Out of 18,000 job postings analyzed, approximately 800 were fraudulent, making manual detection time-consuming and unreliable.
+
+**Solution**: An automated ML model that achieves 98.46% accuracy in detecting fraudulent job postings.
+
+## Dataset
+
+- **Source**: Kaggle - Employment Scam Aegean Dataset
+- **Total Samples**: 18,000 job postings
+- **Fraudulent Samples**: ~800 (minority class)
+- **Data Type**: Combination of textual data and meta-information
+- **Features**: Job title, location, department, salary range, company profile, description, requirements, benefits, and more
+
+### Feature Selection Process
+
+**Removed Features**:
+- `telecommuting` - Low correlation with fraud detection
+- `has_company_logo` - Low correlation value
+- `has_questions` - Low correlation value  
+- `salary_range` - More than 70% missing data
+- `job_id` - Nominal data, not relevant for detection
+
+## Methodology
+
+### 1. Data Collection
+Dataset obtained from Kaggle containing 18k job postings with textual and meta-information features.
+
+### 2. Exploratory Data Analysis
+- **Correlation Matrix**: Calculated feature importance and correlation with fraudulent label
+- **Visualizations**: Bar graphs showing relationships between features and fraud detection
+- Identified key predictive features through correlation analysis
+
+### 3. Data Preprocessing
+
+#### a) Data Cleaning
+- Removed features with low correlation values
+- Handled missing data (removed columns with >70% missing values)
+- Eliminated non-predictive nominal features
+
+#### b) Text Mining Pipeline
+
+**Text Cleaning Function**:
+```python
+# Tokenization using NLTK's word_tokenize
+# Convert all tokens to lowercase
+# Remove punctuation using str.maketrans
+# Filter non-alphabetic tokens
+# Remove stopwords
+# Join cleaned words back into string
+```
+
+**Feature Engineering**:
+- Created `MergeText` column: Concatenated all text columns into single feature
+- Created `Cleaned_Text` column: Applied text cleaning function to merged text
+- Applied preprocessing: tokenization, lowercase conversion, punctuation removal, stopword filtering
+
+**Text Vectorization**:
+- Used `CountVectorizer` from scikit-learn
+- Converted text data into matrix of token counts
+- Applied `fit_transform` on training data
+- Applied `transform` on test data
+
+#### c) Train-Test Split
+- **Split Ratio**: 80% training, 20% testing
+- **Features (X)**: `Cleaned_Text` column (vectorized)
+- **Target (y)**: `fraudulent` column (converted to DataFrame)
+
+### 4. Model Selection and Training
+
+#### Model 1: Logistic Regression
+- **Configuration**: `class_weight='balanced'`
+- **Purpose**: Handle imbalanced dataset by adjusting weights inversely proportional to class frequencies
+- **Training**: Fit on vectorized training data (X_train_vector, y_train)
+- **Prediction**: Applied to test set (X_test_vector)
+
+#### Model 2: Decision Tree Classifier
+- **Training**: Fit on vectorized training data
+- **Prediction**: Applied to test set for comparison
+
+## 📈 Results
+
+### Logistic Regression (Best Model)
+
+| Metric | Class 0 (Legitimate) | Class 1 (Fraudulent) | Overall |
+|--------|---------------------|---------------------|---------|
+| **Accuracy** | - | - | **98.46%** |
+| **Precision** | High | 0.85 | High |
+| **Recall** | High | 0.85 | High |
+| **F1-Score** | High | 0.85 | High |
+
+**Key Strengths**:
+- Exceptional performance on minority class (fraudulent jobs)
+- High precision minimizes false positives
+- High recall minimizes false negatives
+- Balanced performance across both classes
+- Robust handling of imbalanced dataset
+
+### Decision Tree Classifier
+
+| Metric | Class 0 (Legitimate) | Class 1 (Fraudulent) | Overall |
+|--------|---------------------|---------------------|---------|
+| **Accuracy** | - | - | **98.01%** |
+| **Precision** | 0.98 | 0.81 | Good |
+| **Recall** | 0.98 | 0.73 | Moderate |
+| **F1-Score** | 0.98 | 0.77 | Moderate |
+
+**Limitations**:
+- Lower performance on minority class (fraudulent jobs)
+- Recall of 0.73 means only 73% of actual fraudulent jobs detected
+- More false negatives compared to Logistic Regression
+
+## Tech Stack
+
+**Language**: Python 3.x
+
+**Libraries**:
+- `pandas` - Data manipulation
+- `numpy` - Numerical operations
+- `scikit-learn` - Machine learning models and preprocessing
+- `nltk` - Natural language processing and tokenization
+- `matplotlib` - Data visualization
+- `seaborn` - Statistical visualizations
+
+
+## Key Findings
+
+### Model Comparison
+- **Winner**: Logistic Regression outperformed Decision Tree
+- **Critical Metric**: Minority class (fraudulent jobs) detection
+- **Performance Gap**: Logistic Regression achieved 0.85 F1-score vs 0.77 for Decision Tree
+
+### Feature Importance
+- Text-based features (description, requirements, company profile) were most predictive
+- Correlation matrix revealed low-value features that were removed
+- Merged text approach captured comprehensive job posting information
+
+### Challenges Addressed
+- **Class Imbalance**: Only ~4.4% of jobs were fraudulent
+- **Solution**: Used `class_weight='balanced'` in Logistic Regression
+- **Result**: Effective learning from minority class without overfitting
+
+## Real-World Applications
+
+- **Job Platforms**: LinkedIn, Indeed, Glassdoor fraud detection
+- **HR Departments**: Automated screening of posted positions
+- **Job Seeker Tools**: Browser extensions for scam warnings
+- **Content Moderation**: Automated flagging of suspicious postings
+
+## Future Improvements
+
+- Implement advanced NLP models (BERT, LSTM, Transformers)
+- Add real-time prediction API
+- Build web interface for job seekers
+- Incorporate additional features (company reputation scores, posting patterns)
+- Multi-language support
+- Ensemble methods combining multiple models
